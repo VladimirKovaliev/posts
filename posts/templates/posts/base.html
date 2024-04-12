@@ -13,7 +13,7 @@
 
 <style>
     body {
-        background: url('static/images/bkg.png');
+        background: url('/static/images/bkg.png');
         background-position: center;
         background-attachment: fixed;
         background-size; cover;
@@ -183,9 +183,9 @@ footer {
 <div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
     <div class="overlay-content">
-        <a href="#">Рассылки</a>
-        <a href="#">Сообщения</a>
-        <a href="#">Клиенты</a>
+        <a href="#">Платный контент</a>
+        <a href="#">Подписка</a>
+        <a href="{% url 'posts:contact' %}">Контакты</a>
         {% if perms.posts.set_is_active %}
         <a href="#">Пользователи</a>
         {% endif %}

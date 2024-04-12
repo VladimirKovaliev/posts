@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
@@ -27,3 +28,16 @@ def custom_permission_denied_handler(request, exception):
 class HomeView(ListView):
     model = Post
     template_name = 'posts/home.html'
+
+
+def contact(request):
+    if request.method == 'POST':
+        phone = request.POST.get('phone')
+        message = request.POST.get('message')
+        print(f'({phone}): {message}')
+
+    context = {
+        'title': 'Контакты'
+    }
+
+    return render(request, 'posts/contact.html', context)
