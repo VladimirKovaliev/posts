@@ -1,0 +1,224 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SendMailService</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+</head>
+
+<style>
+    body {
+        background: url('static/images/bkg.png');
+        background-position: center;
+        background-attachment: fixed;
+        background-size; cover;
+        font-family: 'Lato', sans-serif;
+    }
+    .card {
+background-color: rgba(255, 255, 255, 0.1);
+    }
+    .container {
+        padding: 50px 16px;
+    }
+    button {
+        border: none;
+        outline: 0;
+        display: inline-block;
+        padding: 8px;
+        color: white;
+        background-color: #000;
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        font-size: 18px;
+    }
+
+    button:hover, a:hover {
+        opacity: 0.7;
+    }
+    .title {
+        color: rgba(83, 149, 189, 0.7);
+        font-size: 30px;
+    }
+    a {
+        text-decoration: none;
+        font-size: 22px;
+        color: black;
+    }
+    .topnav {
+        overflow: hidden;
+        background-color: #333;
+    }
+
+    .topnav a {
+        float: right;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+    }
+
+    .topnav a:hover {
+        background-color: #ddd;
+        color: black;
+    }
+
+    .topnav a.active {
+        background-color: #4CAF50;
+        color: white;
+    }
+.overlay {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0, 0.9);
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+
+.overlay-content {
+    position: relative;
+    top: 25%;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.overlay a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 36px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.overlay a:hover, .overlay a:focus {
+    color: #f1f1f1;
+}
+
+.overlay .closebtn {
+    position: absolute;
+    top: 20px;
+    left: 45px;
+    font-size: 60px;
+}
+
+@media screen and (max-height: 450px) {
+  .overlay a {font-size: 20px}
+  .overlay .closebtn {
+    font-size: 40px;
+    top: 15px;
+    right: 35px;
+  }
+}
+
+.header {
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.0);
+  padding: 20px 10px;
+}
+
+.header a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px;
+  line-height: 25px;
+  border-radius: 4px;
+}
+
+.header a.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.header a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.header a.active {
+  background-color: dodgerblue;
+  color: white;
+  border-radius: 1px;
+}
+footer {
+    position: left;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.0);
+    padding: 0px 0;
+}
+
+</style>
+<div class="header">
+    <a href="{% url 'posts:home' %}" class="logo">PostsService</a>
+
+    <div class="topnav">
+        <a class="active" href="{% url 'posts:home' %}">На главную</a>
+
+        {% if user.is_authenticated %}
+        <a class="active" href="{% url 'users:logout' %}">Выйти</a>
+        <a class="text text-muted" href="#profile" >{{ user.phone }}</a>
+        {% else %}
+        <a href="{% url 'users:login' %}">Войти</a>
+        <a href="{% url 'users:register' %}">Регистрация</a>
+        {% endif %}
+    </div>
+</div>
+
+<div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+    <div class="overlay-content">
+        <a href="#">Рассылки</a>
+        <a href="#">Сообщения</a>
+        <a href="#">Клиенты</a>
+        {% if perms.posts.set_is_active %}
+        <a href="#">Пользователи</a>
+        {% endif %}
+    </div>
+</div>
+
+
+<span style="font-size:30px;cursor:pointer" onclick="openNav()">☰ Открыть меню</span>
+
+<script>
+    function openNav() {
+        document.getElementById("myNav").style.width = "100%";
+    }
+
+    function closeNav() {
+        document.getElementById("myNav").style.width = "0%";
+    }
+</script>
+
+
+{% block content %}
+{% endblock %}
+
+<footer class="pt-4 my-md-5 pt-md-5 border-top">
+    <div class="row">
+        <div class="col-12 col-md">
+            PostsService
+            <small class="d-block mb-3 text-muted">&copy; 2023-{% now 'Y' %}</small>
+        </div>
+    </div>
+</footer>
+</div>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

@@ -15,8 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+handler403 = 'posts.views.custom_permission_denied_handler'
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('posts.urls', namespace='posts')),
+    path('users/', include('users.urls', namespace='users'))
 ]
+
+89268925606
