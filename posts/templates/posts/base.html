@@ -13,7 +13,7 @@
 
 <style>
     body {
-        background: url('static/images/bkg.png');
+        background: url('/static/images/bkg.png');
         background-position: center;
         background-attachment: fixed;
         background-size; cover;
@@ -169,10 +169,11 @@ footer {
 
     <div class="topnav">
         <a class="active" href="{% url 'posts:home' %}">На главную</a>
+        <a href="{% url 'posts:post-list-create' %}">Создать пост</a>
 
         {% if user.is_authenticated %}
         <a class="active" href="{% url 'users:logout' %}">Выйти</a>
-        <a class="text text-muted" href="#profile" >{{ user.phone }}</a>
+        <a class="text text-muted" href="#profile">{{ user.phone }}</a>
         {% else %}
         <a href="{% url 'users:login' %}">Войти</a>
         <a href="{% url 'users:register' %}">Регистрация</a>
@@ -183,9 +184,9 @@ footer {
 <div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
     <div class="overlay-content">
-        <a href="#">Рассылки</a>
-        <a href="#">Сообщения</a>
-        <a href="#">Клиенты</a>
+        <a href="#">Платный контент</a>
+        <a href="#">Подписка</a>
+        <a href="{% url 'posts:contact' %}">Контакты</a>
         {% if perms.posts.set_is_active %}
         <a href="#">Пользователи</a>
         {% endif %}

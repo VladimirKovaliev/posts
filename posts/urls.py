@@ -1,13 +1,15 @@
 from django.urls import path
-from .views import PostListCreateAPIView, PostRetrieveUpdateDestroyAPIView, HomeView
+from .views import HomeView, contact, PostListCreateView, PostDetailView, \
+    PostUpdateView, PostDeleteView
 from posts.apps import PostsConfig
 
 app_name = PostsConfig.name
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
-
-    path('posts/', PostListCreateAPIView.as_view(), name='post-list-create'),
-    path('posts/<int:pk>/', PostRetrieveUpdateDestroyAPIView.as_view(), name='post-retrieve-update-destroy'),
+    path('posts/', PostListCreateView.as_view(), name='post-list-create'),
+    path('posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('edit/<int:pk>/', PostUpdateView.as_view(), name='post-update'),
+    path('delete/<int:pk>/', PostDeleteView.as_view(), name='post-delete'),
+    path('contact/', contact, name='contact'),
 ]
-
