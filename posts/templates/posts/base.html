@@ -184,7 +184,7 @@ footer {
 <div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
     <div class="overlay-content">
-        <a href="#">Платный контент</a>
+        <a href="{% url 'posts:subscription_posts' %}">Платный контент</a>
         <a href="{% url 'users:subscription_plans' %}">Подписка</a>
         <a href="{% url 'posts:contact' %}">Контакты</a>
         {% if perms.posts.set_is_active %}
