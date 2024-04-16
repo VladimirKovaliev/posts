@@ -206,6 +206,15 @@ footer {
     }
 </script>
 
+{% if messages %}
+<div class="container mt-4">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 
 {% block content %}
 {% endblock %}
@@ -218,8 +227,8 @@ footer {
         </div>
     </div>
 </footer>
-</div>
 
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
+
 </html>

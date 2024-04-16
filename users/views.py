@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseBadRequest
@@ -63,9 +64,10 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def subscription_plans(request):
     plans = [
-        {'name': 'Basic', 'price': 1000, 'description': 'Базовая подписка на 1 месяц', 'duration': '1 месяц'},
-        {'name': 'Standard', 'price': 2000, 'description': 'Стандартная подписка на 3 месяца', 'duration': '3 месяца'},
-        {'name': 'Premium', 'price': 5000, 'description': 'Премиум подписка на 1 год', 'duration': '1 год'},
+        {'name': 'Basic', 'price': '10 $', 'description': 'Базовая подписка на 1 месяц', 'duration': '1 месяц'},
+        {'name': 'Standard', 'price': '20 $', 'description': 'Стандартная подписка на 3 месяца',
+         'duration': '3 месяца'},
+        {'name': 'Premium', 'price': '30 $', 'description': 'Премиум подписка на 1 год', 'duration': '1 год'},
     ]
     if request.method == 'POST':
         # Получаем данные о выбранном плане подписки
@@ -77,6 +79,8 @@ def subscription_plans(request):
         if plan_price == 0:
             return HttpResponseBadRequest('Invalid plan name')
 
+        plan_price_cents = int(plan_price[:-1]) * 100
+
         # Создаем платеж через Stripe
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
@@ -86,13 +90,13 @@ def subscription_plans(request):
                     'product_data': {
                         'name': plan_name,
                     },
-                    'unit_amount': plan_price,  # Используем цену плана
+                    'unit_amount': plan_price_cents,  # Используем цену плана
                 },
                 'quantity': 1,
             }],
             mode='payment',
-            success_url=request.build_absolute_uri('/users/success/'),
-            cancel_url=request.build_absolute_uri('/users/cancel/'),
+            success_url=request.build_absolute_uri(reverse('users:success_subscription')),
+            cancel_url=request.build_absolute_uri(reverse('users:cancel_subscription')),
         )
 
         # Перенаправляем пользователя на страницу оплаты Stripe
@@ -101,10 +105,21 @@ def subscription_plans(request):
     return render(request, 'users/subscription_plans.html', {'plans': plans})
 
 
-
 def cancel_subscription(request):
     return render(request, 'users/cancel_payment.html')
 
 
 def success_subscription(request):
-    return render(request, 'users/success_payment.html')
+    if request.user.is_authenticated:
+        user = request.user
+        if not user.subscribed:
+            user.subscribed = True
+            user.save()
+            messages.success(request, 'Подписка успешно оформлена!')
+        else:
+            messages.info(request, 'У вас уже есть активная подписка.')
+        return redirect('posts:home')
+    else:
+        messages.error(request, 'Что-то пошло не так. Пожалуйста, повторите попытку.')
+        return redirect('users:login')
+
