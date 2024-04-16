@@ -57,9 +57,9 @@ class HomeView(ListView):
 
 def contact(request):
     if request.method == 'POST':
-        phone = request.POST.get('phone')
+        name = request.POST.get('name')
         message = request.POST.get('message')
-        print(f'({phone}): {message}')
+        print(f'({name}): {message}')
 
     context = {
         'title': 'Контакты'
