@@ -16,53 +16,51 @@ import stripe
 
 
 class UserLoginView(LoginView):
+    """Обработка входа пользователя"""
     template_name = 'users/login.html'
 
 
 class UserLogoutView(View):
+    """Обработка выхода пользователя"""
+
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect('posts:home')
 
 
 class RegisterView(CreateView):
+    """Регистрация пользователя"""
     model = User
     form_class = RegisterForm
     template_name = 'users/register.html'
 
     def form_valid(self, form):
-        # Сохраняем пользователя, но пока не входим в систему
+        """Валидная форма регистрации пользователя"""
         user = form.save(commit=False)
         user.set_password(form.cleaned_data['password1'])
         user.save()
         return redirect('users:verify_message')
 
     def get_success_url(self):
+        """Получение URL для перенаправления после успешной регистрации"""
         return reverse('users:verify_message')
 
 
 class UserUpdateView(PermissionRequiredMixin, UpdateView):
+    """Обновление информации о пользователе"""
     model = User
     form_class = RegisterForm
     success_url = 'users:users_list'
 
     def get_success_url(self):
+        """Получение URL для перенаправления после успешного обновления"""
         return reverse('users:list_view')
 
 
-# def subscription_plans(request):
-#     plans = [
-#         {'name': 'Basic', 'price': '$10', 'description': 'Базовая подписка на 1 месяц', 'duration': '1 месяц'},
-#         {'name': 'Standard', 'price': '$20', 'description': 'Стандартная подписка на 3 месяца', 'duration': '3 месяца'},
-#         {'name': 'Premium', 'price': '$50', 'description': 'Премиум подписка на 1 год', 'duration': '1 год'},
-#     ]
-#     return render(request, 'users/subscription_plans.html', {'plans': plans})
-
-
-stripe.api_key = settings.STRIPE_SECRET_KEY
-
-
 def subscription_plans(request):
+    """Обработка тарифного плана для подписок"""
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+
     plans = [
         {'name': 'Basic', 'price': '10 $', 'description': 'Базовая подписка на 1 месяц', 'duration': '1 месяц'},
         {'name': 'Standard', 'price': '20 $', 'description': 'Стандартная подписка на 3 месяца',
@@ -70,10 +68,8 @@ def subscription_plans(request):
         {'name': 'Premium', 'price': '30 $', 'description': 'Премиум подписка на 1 год', 'duration': '1 год'},
     ]
     if request.method == 'POST':
-        # Получаем данные о выбранном плане подписки
         plan_name = request.POST.get('plan_name')
 
-        # Находим цену выбранного плана
         plan_price = next((plan['price'] for plan in plans if plan['name'] == plan_name), 0)
 
         if plan_price == 0:
@@ -81,7 +77,6 @@ def subscription_plans(request):
 
         plan_price_cents = int(plan_price[:-1]) * 100
 
-        # Создаем платеж через Stripe
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -99,17 +94,18 @@ def subscription_plans(request):
             cancel_url=request.build_absolute_uri(reverse('users:cancel_subscription')),
         )
 
-        # Перенаправляем пользователя на страницу оплаты Stripe
         return redirect(session.url)
 
     return render(request, 'users/subscription_plans.html', {'plans': plans})
 
 
 def cancel_subscription(request):
+    """URL для перенаправления в случае отмены платежа"""
     return render(request, 'users/cancel_payment.html')
 
 
 def success_subscription(request):
+    """Обработка оплаты подписки"""
     if request.user.is_authenticated:
         user = request.user
         if not user.subscribed:
@@ -122,4 +118,3 @@ def success_subscription(request):
     else:
         messages.error(request, 'Что-то пошло не так. Пожалуйста, повторите попытку.')
         return redirect('users:login')
-
