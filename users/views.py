@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
+from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
 
 from django.urls import reverse
@@ -61,9 +62,20 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def subscription_plans(request):
+    plans = [
+        {'name': 'Basic', 'price': 1000, 'description': 'Базовая подписка на 1 месяц', 'duration': '1 месяц'},
+        {'name': 'Standard', 'price': 2000, 'description': 'Стандартная подписка на 3 месяца', 'duration': '3 месяца'},
+        {'name': 'Premium', 'price': 5000, 'description': 'Премиум подписка на 1 год', 'duration': '1 год'},
+    ]
     if request.method == 'POST':
         # Получаем данные о выбранном плане подписки
         plan_name = request.POST.get('plan_name')
+
+        # Находим цену выбранного плана
+        plan_price = next((plan['price'] for plan in plans if plan['name'] == plan_name), 0)
+
+        if plan_price == 0:
+            return HttpResponseBadRequest('Invalid plan name')
 
         # Создаем платеж через Stripe
         session = stripe.checkout.Session.create(
@@ -74,22 +86,25 @@ def subscription_plans(request):
                     'product_data': {
                         'name': plan_name,
                     },
-                    'unit_amount': 1000,  # Цена плана в центах
+                    'unit_amount': plan_price,  # Используем цену плана
                 },
                 'quantity': 1,
             }],
             mode='payment',
             success_url=request.build_absolute_uri('/users/success/'),
-            cancel_url=request.build_absolute_uri('/users/subscription_plans/'),
+            cancel_url=request.build_absolute_uri('/users/cancel/'),
         )
 
         # Перенаправляем пользователя на страницу оплаты Stripe
         return redirect(session.url)
 
-    # Если запрос GET, просто отображаем страницу с планами подписок
-    plans = [
-        {'name': 'Basic', 'price': '$10', 'description': 'Базовая подписка на 1 месяц', 'duration': '1 месяц'},
-        {'name': 'Standard', 'price': '$20', 'description': 'Стандартная подписка на 3 месяца', 'duration': '3 месяца'},
-        {'name': 'Premium', 'price': '$50', 'description': 'Премиум подписка на 1 год', 'duration': '1 год'},
-    ]
     return render(request, 'users/subscription_plans.html', {'plans': plans})
+
+
+
+def cancel_subscription(request):
+    return render(request, 'users/cancel_payment.html')
+
+
+def success_subscription(request):
+    return render(request, 'users/success_payment.html')
