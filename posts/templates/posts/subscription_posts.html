@@ -1,0 +1,60 @@
+{% extends 'posts/base.html' %}
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h3 class="display-4">PostsServicePremium</h3>
+    <p class="lead">Вы находитесь на версии сайта для пользователей с оформленной подпиской,</p>
+    <p class="lead">тут собраны все ваши посты.</p>
+</div>
+
+<style>
+    .card {
+        max-width: 600px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+    }
+    .card-body {
+        padding: 20px;
+    }
+    .card-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    .card-text {
+        margin-bottom: 20px;
+    }
+    .card-img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px 10px 0 0;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        {% for post in post_list %}
+        <div class="col-md-6">
+            <div class="card">
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img-top">
+                {% endif %}
+                <div class="card-body">
+                    <h3 class="card-title">{{ post.title }}</h3>
+                    <p class="card-text">{{ post.content|slice:":50" }}</p>
+                    <a href="{% url 'posts:post-detail' pk=post.pk %}" class="btn btn-primary stretched-link">Читать
+                        далее</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mx-auto text-center">
+                <a href="{% url 'posts:subscription_create_post' %}" class="btn btn-success btn-lg">Создать премиум
+                    пост</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
