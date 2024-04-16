@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SendMailService</title>
+    <title>PostsService</title>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
 
 </head>
@@ -185,7 +185,7 @@ footer {
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
     <div class="overlay-content">
         <a href="#">Платный контент</a>
-        <a href="#">Подписка</a>
+        <a href="{% url 'users:subscription_plans' %}">Подписка</a>
         <a href="{% url 'posts:contact' %}">Контакты</a>
         {% if perms.posts.set_is_active %}
         <a href="#">Пользователи</a>
