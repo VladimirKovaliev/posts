@@ -4,6 +4,7 @@ from users.models import User
 
 
 class RegisterForm(UserCreationForm):
+    """Форма для регистрации пользователя"""
     phone = forms.CharField(max_length=20, label='Телефон',
                             widget=forms.TextInput(attrs={'placeholder': '78005553535'}))
 

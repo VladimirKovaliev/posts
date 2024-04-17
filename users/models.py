@@ -12,6 +12,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=20, verbose_name='Телефон', unique=True)
     email = models.EmailField(verbose_name='Email', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='Аватар', **NULLABLE)
+    subscribed = models.BooleanField(default=False, verbose_name='Подписка')
 
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
@@ -22,4 +23,3 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-
