@@ -1,17 +1,17 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView
 from django.http import HttpResponseBadRequest
-from django.shortcuts import redirect, render
-
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView
-from users.forms import RegisterForm
-from users.models import User
 from django.views import View
 from django.contrib.auth import logout
 from django.conf import settings
 from django.shortcuts import render, redirect
+
+from users.forms import RegisterForm
+from users.models import User
+
 import stripe
 
 

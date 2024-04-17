@@ -3,13 +3,14 @@ from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views import View
-from rest_framework.permissions import AllowAny
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from rest_framework.permissions import AllowAny
 
 from users.views import subscription_plans
 from .forms import PostForm
 from .models import Post
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 
 
 class PostListCreateView(View):
@@ -110,9 +111,9 @@ class SubscriptionPostListView(LoginRequiredMixin, View):
             return subscription_plans(request)
 
     def dispatch(self, request, *args, **kwargs):
+        """Если возникает 404 ошибка, перенаправляем пользователя на страницу планов подписок"""
         try:
             return super().dispatch(request, *args, **kwargs)
         except HttpResponseNotFound:
-            # Если возникает 404 ошибка, перенаправляем пользователя на страницу планов подписок
             messages.info(request, 'Для начала необходимо приобрести подписку')
             return redirect(reverse('users:subscription_plans'))
