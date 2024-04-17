@@ -23,7 +23,7 @@ load_dotenv(BASE_DIR / '.env')
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!-@1un1!e%!rad^h*%n25=68m^x67)^kro+(n^8m1ti8pwvnjr'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -141,5 +141,5 @@ LOGIN_URL = '/users/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-STRIPE_PUBLIC_KEY = 'pk_test_51OnO9QG5FnNHId8lXnbY4Akkdnr5URO6L2SytNjfRzVYPgjqTe7v8wDiSS93PWCIskorQyPGG7H2o2QmyicQKtJU00THuy4iZq'
-STRIPE_SECRET_KEY = 'sk_test_51OnO9QG5FnNHId8lK3AVxxUp7YFpuJPzyK5jRVciEwNsNx7JZim4f9h6J4uZmEzwUtj600WEz9Et4fK1JsGMpQvl00JTQqRZaK'
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
