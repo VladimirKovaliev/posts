@@ -1,6 +1,7 @@
 from django.contrib import messages
+from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views import View
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,7 +9,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from users.views import subscription_plans
 from .forms import PostForm
 from .models import Post
-from rest_framework.response import Response
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 
 
@@ -102,9 +102,17 @@ class SubscriptionPostListView(LoginRequiredMixin, View):
     """Отображает посты для пользователей с подпиской"""
 
     def get(self, request):
-        if request.user.is_authenticated and request.user.subscribed:  # Проверяем подписку пользователя
+        if request.user.is_authenticated and request.user.subscribed:
             post_list = Post.objects.filter(author=request.user)
             return render(request, 'posts/subscription_posts.html', {'post_list': post_list})
         else:
             messages.info(request, 'Для начала необходимо приобрести подписку')
             return subscription_plans(request)
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except HttpResponseNotFound:
+            # Если возникает 404 ошибка, перенаправляем пользователя на страницу планов подписок
+            messages.info(request, 'Для начала необходимо приобрести подписку')
+            return redirect(reverse('users:subscription_plans'))
