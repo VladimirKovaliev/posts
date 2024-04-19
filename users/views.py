@@ -73,7 +73,7 @@ def subscription_plans(request):
         plan_price = next((plan['price'] for plan in plans if plan['name'] == plan_name), 0)
 
         if plan_price == 0:
-            return HttpResponseBadRequest('Invalid plan name')
+            return HttpResponseBadRequest('Что-то пошло не так. Пожалуйста, повторите попытку.')
 
         plan_price_cents = int(plan_price[:-1]) * 100
 
