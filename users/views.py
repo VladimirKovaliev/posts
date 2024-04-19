@@ -16,6 +16,8 @@ from config.constants import PLANS
 
 import stripe
 
+from users.services import create_payment_session
+
 
 class UserLoginView(LoginView):
     """Обработка входа пользователя"""
@@ -72,24 +74,7 @@ def subscription_plans(request):
         if plan_price == 0:
             return HttpResponseBadRequest('Что-то пошло не так. Пожалуйста, повторите попытку.')
 
-        plan_price_cents = int(plan_price[:-1]) * 100
-
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': plan_name,
-                    },
-                    'unit_amount': plan_price_cents,  # Используем цену плана
-                },
-                'quantity': 1,
-            }],
-            mode='payment',
-            success_url=request.build_absolute_uri(reverse('users:success_subscription')),
-            cancel_url=request.build_absolute_uri(reverse('users:cancel_subscription')),
-        )
+        session = create_payment_session(request, plan_name, plan_price)
 
         return redirect(session.url)
 
