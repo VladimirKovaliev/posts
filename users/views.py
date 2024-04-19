@@ -12,6 +12,8 @@ from django.shortcuts import render, redirect
 from users.forms import RegisterForm
 from users.models import User
 
+from config.constants import PLANS
+
 import stripe
 
 
@@ -61,19 +63,14 @@ def subscription_plans(request):
     """Обработка тарифного плана для подписок"""
     stripe.api_key = settings.STRIPE_SECRET_KEY
 
-    plans = [
-        {'name': 'Basic', 'price': '10 $', 'description': 'Базовая подписка на 1 месяц', 'duration': '1 месяц'},
-        {'name': 'Standard', 'price': '20 $', 'description': 'Стандартная подписка на 3 месяца',
-         'duration': '3 месяца'},
-        {'name': 'Premium', 'price': '30 $', 'description': 'Премиум подписка на 1 год', 'duration': '1 год'},
-    ]
+    plans = PLANS
     if request.method == 'POST':
         plan_name = request.POST.get('plan_name')
 
         plan_price = next((plan['price'] for plan in plans if plan['name'] == plan_name), 0)
 
         if plan_price == 0:
-            return HttpResponseBadRequest('Invalid plan name')
+            return HttpResponseBadRequest('Что-то пошло не так. Пожалуйста, повторите попытку.')
 
         plan_price_cents = int(plan_price[:-1]) * 100
 
