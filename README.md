@@ -21,9 +21,23 @@
 ```bash
   python -m pip install -r requirements.txt 
 ```
-3. Укажите свои данные для зависимостей в env.example
+3. Создайте .env файл в корневой директории проекта и заполните следующие переменные:
+```bash
+SECRET_KEY=
+TIME_ZONE=
+DEBUG=
 
-4. Выполните миграции
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_HOST=
+POSTGRES_PORT=
+
+STRIPE_PUBLIC_KEY=
+STRIPE_SECRET_KEY=
+```
+
+5. Выполните миграции
 ```bash
   python manage.py migrate
 ```
